@@ -1,0 +1,4 @@
+name = Glossary All Letters
+description = Adds all the letters of the alphabet is a glossary (view).
+core = 7.x
+package = custom

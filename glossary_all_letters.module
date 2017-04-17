@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * template.php
+ */
+
+/**
+ * Implements template_preprocess_views_view().
+ */
+function glossary_all_letters_preprocess_views_view(&$vars) {
+  $view_name       = 'u_case_studies';
+  $current_display = 'mc_a_case_studies';
+  $path            = 'case-studies';
+
+  $letters = array();
+  if ($vars['view']->name == $view_name && $vars['view']->current_display == $current_display) {
+    // Get the current rows of letters for glossary.
+    preg_match_all('/<a href="(?:.+)">/', $vars['rows'], $matches);
+    foreach ($matches as $match) {
+      foreach ($match as $url) {
+        // Basically breaking down the a href link into a letter.
+        $check = explode('/' . $path . '/', $url);
+        if (isset($check[1])) {
+          $letters[] = strtolower(substr($check[1], 0, 1));
+        }
+      }
+    }
+    // Take the urls and check them against alphabet
+    $alphas = array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
+    
+    $output = '';
+    foreach ($alphas as $alpha) {
+      if (!in_array($alpha, $letters)) {
+        $output .= '<span class="views-summary views-summary-unformatted alpha">' . strtoupper($alpha);
+      }
+      else {
+        $output .= '<span class="views-summary views-summary-unformatted alpha"><a href="' . url("$path/" . $alpha) . '">' . strtoupper($alpha) . '</a>';
+      }
+      if($alpha == 'z') {
+        $output .= '</span>';
+      }
+      else {
+        $output .= '</span>&nbsp;&nbsp;|&nbsp;&nbsp;';
+      }
+    }
+    $vars['rows'] = $output;
+  }
+}
